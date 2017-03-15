@@ -13,6 +13,7 @@
     "bootstrap": "^4.0.0-alpha.6",
     "element-ui": "^1.2.4",
     "iview": "^1.0.1",
+    "parchment": "^1.0.8",
     "vue": "^2.1.0",
     "vue-quill-editor": "^1.1.1",
     "vue-router": "^2.0.3",

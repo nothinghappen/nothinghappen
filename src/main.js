@@ -9,10 +9,12 @@ import 'element-ui/lib/theme-default/index.css'
 import Element from 'element-ui'
 import 'quill/dist/quill.snow.css'
 import VueQuillEditor from 'vue-quill-editor'
+import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 
 Vue.use(Element)
 Vue.use(VueQuillEditor)
+Vue.use(iView)
 
 import App from './App'
 

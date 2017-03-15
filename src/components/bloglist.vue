@@ -65,7 +65,7 @@
             this.getAndRefresh(page);
         },
         getAndRefresh(p){
-            var load = this.$loading({ fullscreen: true });
+            this.$Loading.start();
             Api.get("/bloglist",{
                 page:p,
                 pageSize:10
@@ -78,10 +78,11 @@
                         this.blogs[i].tagNames.push(this.blogs[i].tagItems[j].content);
                     }
                 }
-                load.close();
+                this.$Loading.finish();
             }).catch((err)=>{
                 console.log(err);
                 this.$message.error('服务器爆炸了');
+                this.$Loading.error();
             });
         }
     },

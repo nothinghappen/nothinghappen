@@ -30,13 +30,17 @@ import Api from '../store/api'
         // });
     },
     activated(){
-        var load = this.$loading({ fullscreen: true,target:'#content_container' });
+        this.$Loading.start();
         Api.get("/blog",{
             id:this.$route.params.id
         }).then((res)=>{
             this.blog = res.data;
-            load.close();
-        });
+            this.$Loading.finish();
+        }).catch((err)=>{
+            console.log(err);
+            this.$message.error('服务器爆炸了');
+            this.$Loading.error();
+        });;
     },
     deactivated(){
         this.blog = {};

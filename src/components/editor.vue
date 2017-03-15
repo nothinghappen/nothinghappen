@@ -1,6 +1,7 @@
 <template>
     <div>
       <el-upload
+        ref="uploadbutton"
         action="//up.qbox.me/"
         type="drag"
         :thumbnail-mode="true"
@@ -8,7 +9,7 @@
         :before-upload="beforeUpload"
         :data="form"
         >
-        <i class="el-icon-upload"></i>
+        <i v-show="false" class="el-icon-picture"></i>
       </el-upload>
       <div id="topbar">
         <div style="width:75%;height:100%;margin:0 auto;line-height:50px;">
@@ -54,6 +55,17 @@
           ></el-autocomplete>
         </div>
       </div>
+      <Modal
+        v-model="modal"
+        title="选择图片宽度百分比"
+        @on-ok="ok"
+        @on-cancel="cancel">
+        <el-slider
+          v-model="imgWidth"
+          :step="10"
+          show-stops>
+        </el-slider>
+    </Modal>
     </div>
 </template>
 
@@ -61,11 +73,19 @@
   import Api from '../store/api'
 
   export default {
+
     components: {
       
     },
     data() {
       return {
+        modal:false,
+        imgWidth:100,
+        editorOption: {
+          modules: {
+              toolbar: '#toolbar'
+            }
+        },
         bucketHost: '',   // 上传图片的外链域名
         form: {},
         bucketHost:'',
@@ -85,6 +105,12 @@
       };
     },
     methods: {
+      ok(){
+        document.querySelector(".el-icon-picture").click();
+      },
+      cancel(){
+
+      },
       beforeUpload (file) {
         let curr = "image";
         let prefix = new Date().getTime();
@@ -108,7 +134,7 @@
       },
       insertImage(imageUrl){
         var quill = this.$refs.myTextEditor.quillEditor;
-        quill.insertEmbed(this.cursorIndex, 'image', imageUrl);
+        quill.insertEmbed(this.cursorIndex, 'image', {url:imageUrl,width:this.imgWidth});
       },
       onEditorChange({ editor, html, text }) {
         
@@ -132,8 +158,13 @@
           return (tags.value.indexOf(queryString.toLowerCase()) === 0);
         };
       },
+      handleImage(){
+        // console.log(this.$refs.uploadbutton);
+        //我实在不懂怎么搞了，先这样吧
+        this.modal = true;
+        //this.insertImage({url:"http://ompl028lw.bkt.clouddn.com/image/1489420215818_bmzxdcgqz.jpg",width:35});
+      },
       handleCommand(key){
-
         this.blog.tags = '';
         for(var i = 0;i < this.tagsId.length;i++){
           if(i == 0){
@@ -180,7 +211,26 @@
       }
     },
     mounted(){
+
+      const Image = Quill.import("formats/image");
+
+      class ImageBlot extends Image {
+        static create(value) {
+          let node = super.create(value);
+          //console.log(value);
+          node.setAttribute('src', this.sanitize(value.url));
+          node.setAttribute('style', "width:"+value.width+"%");
+          return node;
+        }
+      }
+      ImageBlot.blotName = 'image';
+      ImageBlot.tagName = 'img';
+
+      Quill.register(ImageBlot);
+
       var quill = this.$refs.myTextEditor.quillEditor;
+      var toolbar = quill.getModule('toolbar');
+      toolbar.addHandler('image', ()=>{this.handleImage()});
       quill.on('selection-change', (range, oldRange, source) => {
         if (range) {
           if (range.length == 0) {
