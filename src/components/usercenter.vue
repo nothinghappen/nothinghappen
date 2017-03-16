@@ -36,7 +36,7 @@ import Api from '../store/api'
     },
     data() {
       return {
-        
+        activeName:'first'
       };
     },
     methods: {

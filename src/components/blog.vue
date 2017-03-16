@@ -41,13 +41,14 @@
 
     #main_container{
         width: 100%;
-        height: 100%;
     }
 
     .footer{
         /*background-color: black;*/
+        display: block;
         height: 10%;
         font-size: 15px;
+        margin-bottom: 30px;
         clear: both;
     }
 

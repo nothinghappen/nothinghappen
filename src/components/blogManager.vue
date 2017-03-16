@@ -81,6 +81,7 @@ import Api from '../store/api'
               type: 'success',
               message: '删除成功!'
             });
+            this.tableData.splice(index,1);
           }).catch((err)=>{
             this.$message.error('服务器爆炸了');
           });
