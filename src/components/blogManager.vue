@@ -48,6 +48,8 @@
 
 <script>
 import Api from '../store/api'
+import Cookie from '../store/cookie'
+
 
   export default {
     components: {
@@ -56,7 +58,8 @@ import Api from '../store/api'
     data() {
       return {
         pageNum:0,
-        tableData:[]
+        tableData:[],
+        token:''
       };
     },
     methods: {
@@ -75,7 +78,7 @@ import Api from '../store/api'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          Api.delete("/blog",{id:this.tableData[index].id})
+          Api.delete("/admin/blog",{id:this.tableData[index].id})
           .then((res)=>{
             this.$message({
               type: 'success',
@@ -83,7 +86,7 @@ import Api from '../store/api'
             });
             this.tableData.splice(index,1);
           }).catch((err)=>{
-            this.$message.error('服务器爆炸了');
+              //this.$message.error('服务器爆炸了');
           });
         }).catch(() => {
           this.$message({
@@ -93,24 +96,23 @@ import Api from '../store/api'
         });
       },
       getBlogList(p){
-          Api.get("/blogAdminlist",{
+          Api.get("/admin/bloglist",{
                 page:p,
                 pageSize:10
             }).then((res)=>{
-                this.tableData = res.data;
+                this.tableData = res.data.bloglist;
+                this.pageNum = res.data.blogcount;
+            }).catch((err)=>{
+                //this.$message.error('服务器爆炸了');
             });
       },
-      getBlogCount(){
-            Api.get("/blogAdmincount").then((res)=>{
-                this.pageNum = res.data;
-            }).catch((err)=>{
-                this.$message.error('服务器爆炸了');
-            });
-        }
+    },
+    activated(){
+        this.getBlogList(1);
     },
     created(){
-        this.getBlogList(1);
-        this.getBlogCount();
+        this.token = Cookie.get("token");
+        // this.getBlogList(1);
     }
   };
 </script>

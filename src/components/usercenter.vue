@@ -10,7 +10,7 @@
             </div>
             <div style="margin-top:30px;">
                 <el-card class="box-card">
-                    <el-tabs v-model="activeName" @tab-click="handleClick">
+                    <el-tabs v-model="activeName">
                         <el-tab-pane label="文章管理" name="first">
                             <blogManager/>
                         </el-tab-pane>
@@ -28,6 +28,7 @@
 
 <script>
 import Api from '../store/api'
+import Cookie from '../store/cookie'
 
   export default {
     components: {
@@ -36,11 +37,14 @@ import Api from '../store/api'
     },
     data() {
       return {
-        activeName:'first'
+          activeName:'first'
       };
     },
     methods: {
       
+    },
+    created(){
+
     }
   };
 </script>

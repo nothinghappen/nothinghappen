@@ -53,14 +53,6 @@
       };
     },
     methods: {
-        getBlogCount(){
-            Api.get("/blogcount").then((res)=>{
-                this.pageNum = res.data;
-            }).catch((err)=>{
-                console.log(err);
-                this.$message.error('服务器爆炸了');
-            });
-        },
         handlePageChange(page){
             this.getAndRefresh(page);
         },
@@ -70,7 +62,8 @@
                 page:p,
                 pageSize:10
             }).then((res)=>{
-                this.blogs = res.data;
+                this.pageNum = res.data.blogcount;
+                this.blogs = res.data.bloglist;
                 for(var i = 0;i < this.blogs.length;i++){
                     this.blogs[i].content = this.blogs[i].content.replace(/\<img.*?\>/g, '［图片］');
                     this.blogs[i].tagNames = [];
@@ -80,8 +73,8 @@
                 }
                 this.$Loading.finish();
             }).catch((err)=>{
-                console.log(err);
-                this.$message.error('服务器爆炸了');
+                //console.log(err);
+                //this.$message.error('服务器爆炸了');
                 this.$Loading.error();
             });
         }
@@ -91,7 +84,6 @@
     },
     created(){
         this.getAndRefresh(1);
-        this.getBlogCount();
     }
   };
 </script>

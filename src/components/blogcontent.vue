@@ -37,8 +37,8 @@ import Api from '../store/api'
             this.blog = res.data;
             this.$Loading.finish();
         }).catch((err)=>{
-            console.log(err);
-            this.$message.error('服务器爆炸了');
+            //console.log(err);
+            //this.$message.error('服务器爆炸了');
             this.$Loading.error();
         });;
     },

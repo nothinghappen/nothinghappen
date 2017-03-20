@@ -71,6 +71,7 @@
 
 <script>
   import Api from '../store/api'
+  import Cookie from '../store/cookie'
 
   export default {
 
@@ -79,6 +80,7 @@
     },
     data() {
       return {
+        token:'',
         modal:false,
         imgWidth:100,
         editorOption: {
@@ -123,7 +125,7 @@
                   token: res.data.uptoken
                 }
               }).catch((err)=>{
-                this.$message.error('服务器爆炸了');
+                //this.$message.error('服务器爆炸了');
               });
       },
       handleSuccess (response, file, fileList) {
@@ -179,7 +181,7 @@
         }
         if(!this.saved){
           //console.log('post');
-          Api.post("/blog",this.blog)
+          Api.post("/admin/blog",this.blog)
           .then((res)=>{
             if(res.status == 200){
               this.$notify({
@@ -191,11 +193,11 @@
               this.saved = true;
             }
           }).catch((err)=>{
-            this.$message.error('服务器爆炸了');
+            //this.$message.error('服务器爆炸了');
           });
         }else{
           //console.log('update');
-          Api.put("/blog",this.blog)
+          Api.put("/admin/blog",this.blog)
           .then((res)=>{
             if(res.status == 200){
               this.$notify({
@@ -204,8 +206,8 @@
                 type: 'success'
               });
             }
-          }).catch((err)=>{
-            this.$message.error('服务器爆炸了');
+          }).catch((err)=>{        
+            //this.$message.error('服务器爆炸了');
           });
         }
       }
@@ -240,6 +242,8 @@
     },
     created(){
 
+      this.token = Cookie.get("token");
+
       Api.get("/tag",{id:1}).then((res)=>{
         for(var i = 0;i < res.data.length;i++){
             var tag = {
@@ -249,7 +253,7 @@
             this.tags.push(tag);
         }
       }).catch((err)=>{
-          this.$message.error('服务器爆炸了');
+          //this.$message.error('服务器爆炸了');
       });
 
       if(!this.$route.query.id){
@@ -267,7 +271,7 @@
         }
         this.saved = true;
       }).catch((err)=>{
-          this.$message.error('服务器爆炸了');
+          //this.$message.error('服务器爆炸了');
       });
     }
 

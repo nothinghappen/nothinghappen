@@ -26,6 +26,7 @@
 
 <script>
 import Api from '../store/api'
+import Cookie from '../store/cookie'
 
   export default {
     components: {
@@ -33,6 +34,7 @@ import Api from '../store/api'
     },
     data() {
       return {
+        token:'',
         tags:[],
         dynamicTags: [],
         inputVisible: false,
@@ -47,19 +49,19 @@ import Api from '../store/api'
                 this.dynamicTags.push(this.tags[i].content);
             }
         }).catch((err)=>{
-          this.$message.error('服务器爆炸了');
+          //this.$message.error('服务器爆炸了');
         });
       },
       saveTag(tag){
-        Api.post("/tag",tag)
+        Api.post("/admin/tag",tag)
           .then((res)=>{
             this.$message({
               message: '标签保存成功',
               type: 'success'
             });
             this.dynamicTags.push(tag.content);
-        }).catch((err)=>{
-          this.$message.error('服务器爆炸了');
+          }).catch((err)=>{
+            //this.$message.error('服务器爆炸了');
         });
       },
       handleClose(tag) {
@@ -69,7 +71,7 @@ import Api from '../store/api'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          Api.delete("/tag",{id:this.tags[this.dynamicTags.indexOf(tag)].id})
+          Api.delete("/admin/tag",{id:this.tags[this.dynamicTags.indexOf(tag)].id})
           .then((res)=>{
             this.$message({
               type: 'success',
@@ -78,7 +80,7 @@ import Api from '../store/api'
             this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
             this.tags.splice(this.dynamicTags.indexOf(tag), 1);
           }).catch((err)=>{
-            this.$message.error('服务器爆炸了');
+              //this.$message.error('服务器爆炸了');
           });
         }).catch(() => {
           this.$message({
@@ -108,8 +110,12 @@ import Api from '../store/api'
         this.inputValue = '';
       }
     },
+    activated(){
+        this.getTags();
+    },
     created(){
-      this.getTags();
+      this.token = Cookie.get("token");
+      // this.getTags();
     }
   };
 </script>
