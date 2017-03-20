@@ -44,6 +44,7 @@ import Cookie from '../store/cookie'
     methods: {
       getTags(){
         Api.get("/tag",{id:1}).then((res)=>{
+            this.dynamicTags = [];
             this.tags = res.data;
             for(var i = 0;i < this.tags.length;i++){
                 this.dynamicTags.push(this.tags[i].content);

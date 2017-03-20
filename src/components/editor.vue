@@ -72,6 +72,7 @@
 <script>
   import Api from '../store/api'
   import Cookie from '../store/cookie'
+  import Delta from 'quill-delta';
 
   export default {
 
@@ -91,7 +92,6 @@
         bucketHost: '',   // 上传图片的外链域名
         form: {},
         bucketHost:'',
-        cursorIndex:0,
         saved:false,
         blog:{
           id:0,
@@ -136,7 +136,8 @@
       },
       insertImage(imageUrl){
         var quill = this.$refs.myTextEditor.quillEditor;
-        quill.insertEmbed(this.cursorIndex, 'image', {url:imageUrl,width:this.imgWidth});
+        var index = this.getIndex();
+        quill.insertEmbed(index, 'image', {url:imageUrl,width:this.imgWidth});
       },
       onEditorChange({ editor, html, text }) {
         
@@ -159,6 +160,15 @@
         return (tags) => {
           return (tags.value.indexOf(queryString.toLowerCase()) === 0);
         };
+      },
+      getIndex(){
+        var quill = this.$refs.myTextEditor.quillEditor;
+        var range = quill.getSelection();
+        if (range) {
+          return range.index;
+        } else {
+          return quill.getLength();
+        }
       },
       handleImage(){
         // console.log(this.$refs.uploadbutton);
@@ -219,9 +229,12 @@
       class ImageBlot extends Image {
         static create(value) {
           let node = super.create(value);
-          //console.log(value);
-          node.setAttribute('src', this.sanitize(value.url));
-          node.setAttribute('style', "width:"+value.width+"%");
+          if(value.url){
+            node.setAttribute('src', this.sanitize(value.url));
+            node.setAttribute('width',value.width+"%");
+          }else{
+            node.setAttribute('src', this.sanitize(value));
+          }
           return node;
         }
       }
@@ -231,30 +244,19 @@
       Quill.register(ImageBlot);
 
       var quill = this.$refs.myTextEditor.quillEditor;
+
+      quill.clipboard.addMatcher('img', function(node, delta) {
+        var w = node.getAttribute("width");
+        return delta.compose(new Delta().retain(delta.length(),{width:w}));
+      });
       var toolbar = quill.getModule('toolbar');
       toolbar.addHandler('image', ()=>{this.handleImage()});
-      quill.on('selection-change', (range, oldRange, source) => {
-        if (range) {
-          if (range.length == 0) {
-              this.cursorIndex = range.index;
-          }
-      }});
-    },
-    created(){
-
-      this.token = Cookie.get("token");
-
-      Api.get("/tag",{id:1}).then((res)=>{
-        for(var i = 0;i < res.data.length;i++){
-            var tag = {
-              id:res.data[i].id,
-              value:res.data[i].content
-            }
-            this.tags.push(tag);
-        }
-      }).catch((err)=>{
-          //this.$message.error('服务器爆炸了');
-      });
+      // quill.on('selection-change', (range, oldRange, source) => {
+      //   if (range) {
+      //     if (range.length == 0) {
+      //         this.cursorIndex = range.index;
+      //     }
+      // }});
 
       if(!this.$route.query.id){
         return;
@@ -273,6 +275,41 @@
       }).catch((err)=>{
           //this.$message.error('服务器爆炸了');
       });
+
+    },
+    created(){
+
+      this.token = Cookie.get("token");
+
+      Api.get("/tag",{id:1}).then((res)=>{
+        for(var i = 0;i < res.data.length;i++){
+            var tag = {
+              id:res.data[i].id,
+              value:res.data[i].content
+            }
+            this.tags.push(tag);
+        }
+      }).catch((err)=>{
+          //this.$message.error('服务器爆炸了');
+      });
+
+    //   if(!this.$route.query.id){
+    //     return;
+    //   }
+
+    //   Api.get("/blog",{
+    //     id:this.$route.query.id
+    //   }).then((res)=>{
+    //     this.blog = res.data;
+    //     var tagitems = this.blog.tagItems;
+    //     for(var i = 0;i < tagitems.length;i++){
+    //       this.tagsId.push(tagitems[i].id);
+    //       this.dynamicTags.push(tagitems[i].content);
+    //     }
+    //     this.saved = true;
+    //   }).catch((err)=>{
+    //       //this.$message.error('服务器爆炸了');
+    //   });
     }
 
   };
