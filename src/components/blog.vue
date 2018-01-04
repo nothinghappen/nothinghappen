@@ -1,6 +1,15 @@
 <template>
   <div id="main_container">
-      <div id="top_img"></div>
+      <div>
+        <el-row>
+            <el-col>
+                <el-menu mode="horizontal" id="top_img">
+                    <el-menu-item index="1" style="color:#fff"><i class="el-icon-menu"></i>首页</el-menu-item>
+                    <el-menu-item index="2" style="color:#fff"><i class="el-icon-setting"></i>导航三</el-menu-item>
+                </el-menu>
+            </el-col>
+        </el-row>
+      </div>
       <keep-alive>
         <router-view></router-view>
       </keep-alive>
@@ -41,6 +50,15 @@
 
     #main_container{
         width: 100%;
+    }
+
+    .el_menu_item::hover{
+        background-color: transparent !important
+    }
+
+    .el-menu--horizontal .el-menu-item:hover{
+        background-color: transparent !important;
+        border-bottom:transparent !important
     }
 
     .footer{
